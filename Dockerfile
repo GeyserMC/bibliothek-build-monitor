@@ -1,4 +1,7 @@
-FROM node:lts-slim
+FROM node:lts-alpine
+
+RUN apk update \
+	&& apk add git
 
 ENV NODE_ENV=production
 
