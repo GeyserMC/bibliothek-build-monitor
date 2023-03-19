@@ -20,6 +20,12 @@ watcher.on('error', function (e) {
   console.error(e)
 })
 
+if (process.env.NODE_ENV !== 'production') {
+  watcher.on('raw', function (event, path, details) {
+    console.debug('Raw event info:', event, path, details)
+  })
+}
+
 console.log(`Watching for file changes on ${uploadFolder}`)
 
 watcher.on('add', async (filepath) => {
@@ -48,12 +54,6 @@ watcher.on('add', async (filepath) => {
   }
 })
 
-if (process.env.NODE_ENV !== 'production') {
-  watcher.on('raw', function (event, path, details) {
-    console.debug('Raw event info:', event, path, details)
-  })
-}
-
 async function handleMetadata (folder, metadata) {
   const projectFriendly = metadata.project.charAt(0).toUpperCase() + metadata.project.slice(1)
   const repoUrl = process.env.ORG + projectFriendly
@@ -70,8 +70,9 @@ async function handleMetadata (folder, metadata) {
 
   const repoPath = path.join(folder, 'repo')
   console.log(`Cloning repo to '${repoPath}'`)
-  execSync(`git clone -n "${repoUrl}" "${repoPath}"`)
-  execSync(`git -C "${repoPath}" checkout "${metadata.commit}"`)
+  await execShellCommand(`git clone -n "${repoUrl}" "${repoPath}"`)
+  console.log(`Checking out commit'${metadata.commit}'`)
+  await execShellCommand(`git -C "${repoPath}" checkout "${metadata.commit}"`)
 
   console.log('Getting SHA256 of files')
   const downloads = []
@@ -97,4 +98,17 @@ async function handleMetadata (folder, metadata) {
 
   console.log(`Cleaning up ${folder}`)
   fs.rmSync(folder, { recursive: true, force: true })
+}
+
+// From: https://ali-dev.medium.com/how-to-use-promise-with-exec-in-node-js-a39c4d7bbf77
+function execShellCommand (cmd) {
+  const exec = require('child_process').exec
+  return new Promise((resolve, reject) => {
+    exec(cmd, (error, stdout, stderr) => {
+      if (error) {
+        console.warn(error)
+      }
+      resolve(stdout || stderr)
+    })
+  })
 }
