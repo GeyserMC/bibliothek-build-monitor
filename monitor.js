@@ -1,6 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 const crypto = require('crypto')
+const chokidar = require('chokidar')
 const { execSync } = require('child_process')
 
 require('log-timestamp')
@@ -12,22 +13,21 @@ const uploadFolder = process.env.INPUT_DIR || './uploads/'
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 
+// Start the watcher ignoring hidden files and the repo folder
+const watcher = chokidar.watch(uploadFolder, { ignored: /(^|[\/\\])(\..|repo)/, persistent: true })
+
+watcher.on('error', function (e) {
+  console.error(e)
+})
+
 console.log(`Watching for file changes on ${uploadFolder}`)
 
-fs.watch(uploadFolder, { recursive: true }, async (event, filepath) => {
-  // Ignore invalid filepaths and most events
-  // From the docs: On most platforms, 'rename' is emitted whenever a filename appears or disappears in the directory.
-  if (event !== 'rename' || filepath.length === 0) return
+watcher.on('add', async (filepath) => {
+  const filename = path.basename(filepath)
+  const folder = path.dirname(filepath)
 
-  const fullPath = path.join(uploadFolder, filepath)
-  const filename = path.basename(fullPath)
-  const folder = path.dirname(fullPath)
-
-  // Make sure the file exists and is not a directory
-  if (!fs.existsSync(fullPath)) return
-  if (fs.lstatSync(fullPath).isDirectory()) return
-
-  // console.log(`${event} - ${filepath}`)
+  // Make sure the path is not a directory
+  if (fs.lstatSync(filepath).isDirectory()) return
 
   if (filename.endsWith('.jar')) {
     console.log(`${filename} created`)
@@ -37,7 +37,7 @@ fs.watch(uploadFolder, { recursive: true }, async (event, filepath) => {
       // Keep trying to read the file until it's available
       await sleep(1000)
       try {
-        const metadata = JSON.parse(fs.readFileSync(fullPath, 'utf8'))
+        const metadata = JSON.parse(fs.readFileSync(filepath, 'utf8'))
         console.log(metadata)
 
         handleMetadata(folder, metadata)
@@ -47,6 +47,12 @@ fs.watch(uploadFolder, { recursive: true }, async (event, filepath) => {
     }
   }
 })
+
+if (process.env.NODE_ENV !== 'production') {
+  watcher.on('raw', function (event, path, details) {
+    console.debug('Raw event info:', event, path, details)
+  })
+}
 
 async function handleMetadata (folder, metadata) {
   const projectFriendly = metadata.project.charAt(0).toUpperCase() + metadata.project.slice(1)
@@ -63,9 +69,9 @@ async function handleMetadata (folder, metadata) {
   console.log(`Files: ${files}`)
 
   const repoPath = path.join(folder, 'repo')
-  console.log(`Cloning repo to ${repoPath}`)
-  execSync(`git clone -n ${repoUrl} ${repoPath}`)
-  execSync(`git -C ${repoPath} checkout ${metadata.commit}`)
+  console.log(`Cloning repo to '${repoPath}'`)
+  execSync(`git clone -n "${repoUrl}" "${repoPath}"`)
+  execSync(`git -C "${repoPath}" checkout "${metadata.commit}"`)
 
   console.log('Getting SHA256 of files')
   const downloads = []
@@ -73,7 +79,6 @@ async function handleMetadata (folder, metadata) {
     const filePath = path.join(folder, file)
     const id = file.split('.')[0].split('-').slice(1).join().toLowerCase()
     const hash = crypto.createHash('sha256').update(fs.readFileSync(filePath)).digest('hex')
-    // "$ID:/app/files/$(basename $F):$SHA256:$(basename $F)"
     downloads.push(`${id}:${filePath}:${hash}:${file}`)
   }
 

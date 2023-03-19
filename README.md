@@ -3,6 +3,40 @@ A helper script for automatically importing build files for bibliothek
 
 It monitors /app/uploads for new builds (relying on metadata.json files) and then processes the given metadata and files and inserts them into the database.
 
+## File structure
+The project name and build number folders dont matter aslong as the metadata.json file is in the correct place. The metadata.json file is used to determine the project name and build number. The files are then moved to the storage directory and the metadata is inserted into the database.
+```bash
+/app/uploads
+├── floodgate # Project name
+│   ├── 22 # Build number
+│   │   ├── floodgate-bungee.jar
+│   │   ├── floodgate-spigot.jar
+│   │   ├── floodgate-velocity.jar
+│   │   └── metadata.json
+│   └── 23 # Build number
+│       ├── floodgate-bungee.jar
+│       ├── floodgate-spigot.jar
+│       ├── floodgate-velocity.jar
+│       └── metadata.json
+└── geyser # Project name
+	├── 46 # Build number
+	│   ├── Geyser-BungeeCord.jar
+	│   ├── Geyser-Fabric.jar
+	│   ├── Geyser-Spigot.jar
+	│   ├── Geyser-Sponge.jar
+	│   ├── Geyser-Standalone.jar
+	│   ├── Geyser-Velocity.jar
+	│   └── metadata.json
+	└── 47 # Build number
+	    ├── Geyser-BungeeCord.jar
+	    ├── Geyser-Fabric.jar
+	    ├── Geyser-Spigot.jar
+	    ├── Geyser-Sponge.jar
+	    ├── Geyser-Standalone.jar
+	    ├── Geyser-Velocity.jar
+	    └── metadata.json
+```
+
 ## Environment variables
 Environment variables required for use
 `INPUT_DIR` `/app/uploads`
