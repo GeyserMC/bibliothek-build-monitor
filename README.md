@@ -12,7 +12,7 @@ Environment variables required for use
 
 ## Docker
 Example docker command to run the tool
-`docker run --name bibliothek-build-monitor -e ORG=https://github.com/GeyserMC/ -e MONGODB_URL=mongodb://localhost:27017/library -v /srv/download/storage/:/app/storage -v /srv/download/handler/files/:/app/uploads -d quay.io/geysermc/bibliothek-build-monitor`
+`docker run --name bibliothek-build-monitor -e ORG=https://github.com/GeyserMC/ -e MONGODB_URL=mongodb://localhost:27017/library -v /srv/download/storage/:/app/storage -v /srv/download/handler/files/:/app/uploads -d quay.io/geysermc/bibliothek-build-monitor:latest`
 
 ## Example `metadata.json`
 ```json
