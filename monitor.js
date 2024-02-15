@@ -78,7 +78,17 @@ async function handleMetadata (folder, metadata) {
   const downloads = []
   for (const file of files) {
     const filePath = path.join(folder, file)
-    const id = file.split('.')[0].split('-').slice(1).join().toLowerCase()
+    if (fs.lstatSync(filePath).isDirectory()) {
+      // Ignore directories
+      continue
+    }
+
+    let id = file.split('.')[0].split('-').slice(1).join().toLowerCase()
+    if (id === '') {
+      // Fallback to the file name if no id is found
+      id = file.split('.')[0].toLowerCase()
+    }
+
     const hash = crypto.createHash('sha256').update(fs.readFileSync(filePath)).digest('hex')
     downloads.push(`${id}:${filePath}:${hash}:${file}`)
   }
