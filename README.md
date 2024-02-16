@@ -5,14 +5,16 @@ It monitors /app/uploads for new builds (relying on metadata.json files) and the
 
 ## Docker
 Example docker command to run the tool
-`docker run --name bibliothek-build-monitor -e ORG=https://github.com/GeyserMC/ -e MONGODB_URL=mongodb://localhost:27017/library -v /srv/download/storage/:/app/storage -v /srv/download/handler/files/:/app/uploads -d quay.io/geysermc/bibliothek-build-monitor:latest`
+`docker run --name bibliothek-build-monitor -e ORG=https://github.com/GeyserMC/ -e MONGODB_URL=mongodb://localhost:27017/library -v /srv/download/storage/:/app/storage -v /srv/download/handler/files/:/app/uploads -d ghcr.io/geysermc/bibliothek-build-monitor:latest`
 
 ## Environment variables
 Environment variables required for use
-`INPUT_DIR` `/app/uploads`
-`STORAGE_DIR` `/app/storage`
-`ORG` `https://github.com/GeyserMC/`
-`MONGODB_URL` `mongodb://bibliothek:password@localhost:27017/library`
+| Environment Variable | Example value |
+| --- | --- |
+| `INPUT_DIR` | `/app/uploads` |
+| `STORAGE_DIR` | `/app/storage` |
+| `ORG` | `https://github.com/GeyserMC/` |
+| `MONGODB_URL` | `mongodb://bibliothek:password@localhost:27017/library` |
 
 ## Example `metadata.json`
 ```json
