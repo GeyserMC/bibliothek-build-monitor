@@ -1,8 +1,8 @@
 const fs = require('fs')
 const path = require('path')
+const axios = require('axios')
 const crypto = require('crypto')
 const chokidar = require('chokidar')
-const { execSync } = require('child_process')
 
 require('log-timestamp')
 require('dotenv').config()
@@ -55,12 +55,19 @@ watcher.on('add', async (filepath) => {
 })
 
 async function handleMetadata (folder, metadata) {
-  const projectFriendly = metadata.project.charAt(0).toUpperCase() + metadata.project.slice(1)
-  const repoUrl = process.env.ORG + projectFriendly
+  let projectFriendly = metadata.project.charAt(0).toUpperCase() + metadata.project.slice(1)
+  let repoUrl = process.env.ORG + projectFriendly
   const versionGroup = metadata.version.split('.').slice(0, 2).join('.')
   const files = fs.readdirSync(folder).filter(f => f !== 'metadata.json')
 
-  console.log(`Project: ${metadata.project}`)
+  // Use the GitHub API to get the project name if it exists
+  const repoData = await axios.get(repoUrl.replace('github.com/', 'api.github.com/repos/')).then((res) => res.data).catch((e) => null)
+  if (repoData && 'name' in repoData) {
+    projectFriendly = repoData.name
+    repoUrl = repoData.html_url
+  }
+
+  console.log(`Project: ${projectFriendly} (${metadata.project})`)
   console.log(`Version: ${metadata.version}`)
   console.log(`Version Group: ${versionGroup}`)
   console.log(`Build: ${metadata.id}`)
