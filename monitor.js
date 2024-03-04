@@ -79,7 +79,7 @@ async function handleMetadata (folder, metadata) {
   console.log(`Cloning repo to '${repoPath}'`)
   await execShellCommand(`git clone -n "${repoUrl}" "${repoPath}"`)
   await execShellCommand(`git -C "${repoPath}" fetch`)
-  console.log(`Checking out commit'${metadata.commit}'`)
+  console.log(`Checking out commit '${metadata.commit}'`)
   await execShellCommand(`git -C "${repoPath}" checkout "${metadata.commit}"`)
 
   console.log('Getting SHA256 of files')
