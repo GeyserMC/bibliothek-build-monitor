@@ -78,6 +78,7 @@ async function handleMetadata (folder, metadata) {
   const repoPath = path.join(folder, 'repo')
   console.log(`Cloning repo to '${repoPath}'`)
   await execShellCommand(`git clone -n "${repoUrl}" "${repoPath}"`)
+  await execShellCommand(`git -C "${repoPath}" fetch`)
   console.log(`Checking out commit'${metadata.commit}'`)
   await execShellCommand(`git -C "${repoPath}" checkout "${metadata.commit}"`)
 
