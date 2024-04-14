@@ -102,8 +102,9 @@ module.exports.insert = async (buildInfo) => {
     }, { sort: { _id: -1 } })
     const changes = []
     const lastBuild = previousBuild && previousBuild.changes.length ? previousBuild.changes.slice(0, 1)[0].commit : 'HEAD^1'
+    const commits;
     try {
-      const commits = gitlog({
+      commits = gitlog({
         repo: buildInfo.repositoryPath,
         fields: ['hash', 'subject', 'rawBody'],
         branch: lastBuild + '...HEAD'
@@ -111,6 +112,7 @@ module.exports.insert = async (buildInfo) => {
     } catch(error) {
       // Likely failed due to forced push or incompatible base branches
       // Build will have no history
+      commits = [];
     }
     commits.forEach(function (commit) {
       changes.push({
