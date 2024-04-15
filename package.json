@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "main": "monitor.js",
     "scripts": {
-        "package": "ncc build bibliothek-cli.ts -m -t -s",
+        "package": "npx ncc build bibliothek-cli.ts -m -t -s",
         "package:watch": "npm run package -- --watch"
     },
     "engines": {
