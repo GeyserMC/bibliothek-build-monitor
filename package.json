@@ -1,35 +1,40 @@
 {
-  "name": "bibliothek-build-monitor",
-  "version": "1.0.0",
-  "main": "monitor.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "GPL-3.0-or-later",
-  "description": "A helper script for automatically importing build files for bibliothek",
-  "devDependencies": {
-    "standard": "^17.0.0"
-  },
-  "dependencies": {
-    "axios": "^1.6.7",
-    "chokidar": "^3.5.3",
-    "dotenv": "^16.0.3",
-    "gitlog": "^4.0.4",
-    "log-timestamp": "^0.3.0",
-    "mongodb": "^5.1.0"
-  },
-  "nodemonConfig": {
-    "ignore": [
-      "uploads/*"
-    ]
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/GeyserMC/bibliothek-build-monitor.git"
-  },
-  "bugs": {
-    "url": "https://github.com/GeyserMC/bibliothek-build-monitor/issues"
-  },
-  "homepage": "https://github.com/GeyserMC/bibliothek-build-monitor#readme"
+    "name": "bibliothek-build-monitor",
+    "version": "1.0.0",
+    "main": "monitor.js",
+    "scripts": {
+        "package": "ncc build bibliothek-cli.ts -m -t -s",
+        "package:watch": "npm run package -- --watch"
+    },
+    "engines": {
+        "node": ">=20"
+    },
+    "author": "",
+    "license": "GPL-3.0-or-later",
+    "description": "A helper script for automatically importing build files for bibliothek",
+    "devDependencies": {
+        "@types/node": "^20.12.7",
+        "@vercel/ncc": "^0.38.1",
+        "standard": "^17.0.0",
+        "typescript": "^5.4.5"
+    },
+    "dependencies": {
+        "chokidar": "^3.6.0",
+        "dotenv": "^16.4.5",
+        "mongodb": "^6.5.0",
+        "tslib": "^2.6.2"
+    },
+    "nodemonConfig": {
+        "ignore": [
+            "uploads/*"
+        ]
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/GeyserMC/bibliothek-build-monitor.git"
+    },
+    "bugs": {
+        "url": "https://github.com/GeyserMC/bibliothek-build-monitor/issues"
+    },
+    "homepage": "https://github.com/GeyserMC/bibliothek-build-monitor#readme"
 }

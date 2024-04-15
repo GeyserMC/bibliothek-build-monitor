@@ -12,6 +12,6 @@ WORKDIR /app
 
 COPY . .
 
-RUN npm install --production
+RUN npm install --production && npm run package
 
-CMD [ "node", "monitor.js" ]
+CMD [ "node", "--enable-source-maps", "dist/index.js" ]
