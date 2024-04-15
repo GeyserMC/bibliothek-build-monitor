@@ -12,7 +12,8 @@ WORKDIR /app
 
 COPY . .
 
-RUN npm install --production
+RUN npm install
 RUN npm run package
+RUN rm -rf node_modules/
 
 CMD [ "node", "--enable-source-maps", "dist/index.js" ]
