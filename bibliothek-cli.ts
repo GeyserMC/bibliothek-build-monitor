@@ -181,7 +181,7 @@ const insert = async (metadata: Metadata, folder: string) => {
             version.name + ' (' + version._id + '): ' + build.insertedId
         );
     } catch (e) {
-        logger.info(e);
+        logger.error(e);
     } finally {
         await client.close()
     }
