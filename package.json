@@ -4,7 +4,8 @@
     "main": "monitor.js",
     "scripts": {
         "package": "ncc build bibliothek-cli.ts -m -t -s",
-        "package:watch": "npm run package -- --watch"
+        "package:watch": "npm run package -- --watch",
+        "start": "node --enable-source-maps dist/index.js"
     },
     "engines": {
         "node": ">=20"

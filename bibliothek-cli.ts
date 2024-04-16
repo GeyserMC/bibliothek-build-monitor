@@ -137,8 +137,8 @@ const insert = async (metadata: Metadata, folder: string) => {
 
         const majorVersion = metadata.version.split('.').slice(0, 2).join('.');
         const versionGroup = await database.collection('version_groups').findOneAndUpdate(
-            { project: project.value._id, name: majorVersion },
-            { $setOnInsert: { project: project.value._id, name: majorVersion } },
+            { project: project._id, name: majorVersion },
+            { $setOnInsert: { project: project._id, name: majorVersion } },
             mongoOptions
         );
 
@@ -147,11 +147,11 @@ const insert = async (metadata: Metadata, folder: string) => {
         }
 
         const version = await database.collection('versions').findOneAndUpdate(
-            { project: project.value._id, name: metadata.version },
+            { project: project._id, name: metadata.version },
             { $setOnInsert: 
                 {
-                    project: project.value._id,
-                    group: versionGroup.value._id,
+                    project: project._id,
+                    group: versionGroup._id,
                     name: metadata.version,
                     time: new Date()
                 }
@@ -164,8 +164,8 @@ const insert = async (metadata: Metadata, folder: string) => {
         };
 
         const build = await database.collection('builds').insertOne({
-            project: project.value._id,
-            version: version.value._id,
+            project: project._id,
+            version: version._id,
             number: metadata.number,
             time: new Date(),
             changes: metadata.changes,
@@ -177,8 +177,8 @@ const insert = async (metadata: Metadata, folder: string) => {
         logger.info(
             'Inserted build ' + metadata.number + 
             ' (channel: ' + buildChannel + ') for project ' +
-            project.value.name + ' (' + project.value._id + ') version ' +
-            version.value.name + ' (' + version.value._id + '): ' + build.insertedId
+            project.name + ' (' + project._id + ') version ' +
+            version.name + ' (' + version._id + '): ' + build.insertedId
         );
     } catch (e) {
         logger.info(e);
