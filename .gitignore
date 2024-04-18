@@ -145,3 +145,7 @@ dist
 
 uploads/
 storage/
+yarn.lock
+package-lock.json
+dist/
+staging/
