@@ -68,12 +68,17 @@ watcher.on('add', async (filepath) => {
             // Keep trying to read the file until it's available
             await new Promise(resolve => setTimeout(resolve, 1000));
             try {
-                const metadata: Metadata = JSON.parse(fs.readFileSync(filepath, 'utf8'));
+                const fileContents: string = fs.readFileSync(filepath, 'utf8');
+                if (fileContents === '') {
+                    logger.error(`Metadata file is empty: ${filepath}`);
+                    break;
+                }
+                const metadata: Metadata = JSON.parse(fileContents);
                 logger.info(metadata);
                 await handleMetadata(folder, metadata);
                 return;
             } catch (e) { 
-                logger.error(e);
+                logger.error(`Error while reading metadata file: ${filepath}`, e);
                 break;
             }
         }
